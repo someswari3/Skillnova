@@ -1,27 +1,22 @@
 // ════════════════════════════════════════════════════════════
-//  MENTOR — pages/Interns.jsx (daily attendance + weekly ratings)
+//  MENTOR — pages/Interns.jsx (daily attendance + intern details)
 // ════════════════════════════════════════════════════════════
 import { useEffect, useState } from "react";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Card, Badge } from "../../shared/components/UI";
+import UserProfileModal from "../../shared/components/UserProfileModal";
 import api from "../../lib/api";
 import notify from "../../lib/toast";
+import { useSearchStore } from "../../lib/searchStore";
 
 const todayKey = () => new Date().toISOString().slice(0, 10);
-// Mentor — Interns page
-import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import { Card } from '../../shared/components/UI';
-import UserProfileModal from '../../shared/components/UserProfileModal';
-import api from '../../lib/api';
 
 const Interns = () => {
   const [interns, setInterns] = useState([]);
-  const [todayAttendance, setTodayAttendance] = useState({}); // userId -> status
+  const [todayAttendance, setTodayAttendance] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [marking, setMarking] = useState(null); // userId currently being marked
-
+  const [marking, setMarking] = useState(null);
   const [streaks, setStreaks] = useState({});
 
   const fetchAll = async () => {
@@ -32,6 +27,7 @@ const Interns = () => {
         api.get("/attendance", { params: { date: todayKey(), limit: 100 } }),
       ]);
       setInterns(internsRes.data.items);
+      useSearchStore.getState().setInterns(internsRes.data.items);
       const map = {};
       attendanceRes.data.items.forEach((a) => {
         map[a.userId] = a.status;
@@ -72,11 +68,7 @@ const Interns = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2
-          className="animate-spin"
-          size={28}
-          style={{ color: "var(--muted)" }}
-        />
+        <Loader2 className="animate-spin" size={28} style={{ color: "var(--muted)" }} />
       </div>
     );
 
@@ -87,7 +79,7 @@ const Interns = () => {
           My Interns ({interns.length})
         </h2>
         <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-          Mark today's meeting attendance and manage weekly ratings.
+          Mark today's meeting attendance, view intern details and weekly ratings.
         </p>
       </div>
 
@@ -95,25 +87,9 @@ const Interns = () => {
         <div className="sn-table-scroll">
           <table className="w-full text-sm min-w-[48rem]">
             <thead>
-              <tr
-                style={{
-                  background: "var(--bg)",
-                  borderBottom: "1px solid var(--border)",
-                }}
-              >
-                {[
-                  "Name",
-                  "Email",
-                  "Department",
-                  "Today's meeting",
-                  "Streak",
-                  "Rating",
-                ].map((h) => (
-                  <th
-                    key={h}
-                    className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-left"
-                    style={{ color: "var(--muted)" }}
-                  >
+              <tr style={{ background: "var(--bg)", borderBottom: "1px solid var(--border)" }}>
+                {["Name", "Email", "Department", "Today's meeting", "Streak", "Rating"].map((h) => (
+                  <th key={h} className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-left" style={{ color: "var(--muted)" }}>
                     {h}
                   </th>
                 ))}
@@ -123,57 +99,23 @@ const Interns = () => {
               {interns.map((i) => {
                 const status = todayAttendance[i.id];
                 return (
-                  <tr
-                    key={i.id}
-                    style={{ borderBottom: "1px solid var(--border)" }}
-                  >
-                    <td
-                      className="px-5 py-4 font-medium"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {i.name}
+                  <tr key={i.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td className="px-5 py-4 font-medium" style={{ color: "var(--text)" }}>
+                      <button type="button" onClick={() => setSelectedUserId(i.id)} className="text-left hover:underline" style={{ color: "var(--text)" }}>
+                        {i.name}
+                      </button>
                     </td>
-                    <td
-                      className="px-5 py-4 text-xs"
-                      style={{ color: "var(--muted)" }}
-                    >
-                      {i.email}
-                    </td>
-                    <td
-                      className="px-5 py-4 text-xs"
-                      style={{ color: "var(--muted)" }}
-                    >
-                      {i.department}
-                    </td>
+                    <td className="px-5 py-4 text-xs" style={{ color: "var(--muted)" }}>{i.email}</td>
+                    <td className="px-5 py-4 text-xs" style={{ color: "var(--muted)" }}>{i.department}</td>
                     <td className="px-5 py-4">
                       {status ? (
-                        <Badge
-                          variant={
-                            status === "PRESENT"
-                              ? "success"
-                              : status === "LEAVE"
-                                ? "warning"
-                                : "danger"
-                          }
-                        >
-                          {status}
-                        </Badge>
+                        <Badge variant={status === "PRESENT" ? "success" : status === "LEAVE" ? "warning" : "danger"}>{status}</Badge>
                       ) : (
                         <div className="flex gap-1.5">
-                          <button
-                            onClick={() => markAttendance(i.id, "PRESENT")}
-                            disabled={marking === i.id}
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-xs font-medium"
-                            style={{ background: "#00bea3" }}
-                          >
+                          <button onClick={() => markAttendance(i.id, "PRESENT")} disabled={marking === i.id} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-xs font-medium" style={{ background: "#00bea3" }}>
                             <CheckCircle size={12} /> Present
                           </button>
-                          <button
-                            onClick={() => markAttendance(i.id, "ABSENT")}
-                            disabled={marking === i.id}
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-xs font-medium"
-                            style={{ background: "#dc2626" }}
-                          >
+                          <button onClick={() => markAttendance(i.id, "ABSENT")} disabled={marking === i.id} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-xs font-medium" style={{ background: "#dc2626" }}>
                             <XCircle size={12} /> Absent
                           </button>
                         </div>
@@ -182,24 +124,8 @@ const Interns = () => {
                     <td className="px-5 py-4">
                       {streaks[i.id] ? (
                         <div className="flex items-center gap-1.5 text-xs">
-                          <span
-                            className="font-bold"
-                            style={{ color: "var(--text)" }}
-                          >
-                            🔥 {streaks[i.id].currentStreak}
-                          </span>
-
-                          <Badge
-                            variant={
-                              streaks[i.id].risk === "HIGH"
-                                ? "danger"
-                                : streaks[i.id].risk === "MEDIUM"
-                                  ? "warning"
-                                  : "success"
-                            }
-                          >
-                            {streaks[i.id].risk}
-                          </Badge>
+                          <span className="font-bold" style={{ color: "var(--text)" }}>🔥 {streaks[i.id].currentStreak}</span>
+                          <Badge variant={streaks[i.id].risk === "HIGH" ? "danger" : streaks[i.id].risk === "MEDIUM" ? "warning" : "success"}>{streaks[i.id].risk}</Badge>
                         </div>
                       ) : (
                         <span className="text-xs opacity-40">—</span>
@@ -213,26 +139,6 @@ const Interns = () => {
                   </tr>
                 );
               })}
-          <table className="w-full text-sm min-w-[40rem]">
-            <thead><tr style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-              {['Name', 'Email', 'Department', 'Rating', 'Status'].map((h) => (
-                <th key={h} className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-left" style={{ color: 'var(--muted)' }}>{h}</th>
-              ))}
-            </tr></thead>
-            <tbody>
-              {interns.map((i) => (
-                <tr key={i.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                  <td className="px-5 py-4 font-medium" style={{ color: 'var(--text)' }}>
-                    <button type="button" onClick={() => setSelectedUserId(i.id)} className="text-left hover:underline" style={{ color: 'var(--text)' }}>
-                      {i.name}
-                    </button>
-                  </td>
-                  <td className="px-5 py-4 text-xs" style={{ color: 'var(--muted)' }}>{i.email}</td>
-                  <td className="px-5 py-4" style={{ color: 'var(--muted)' }}>{i.department}</td>
-                  <td className="px-5 py-4"><span className="text-xs font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">⭐ {i.rating}</span></td>
-                  <td className="px-5 py-4 text-xs">{i.status}</td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
@@ -244,3 +150,4 @@ const Interns = () => {
 };
 
 export default Interns;
+

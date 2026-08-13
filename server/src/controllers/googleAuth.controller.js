@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════
 //  Google OAuth Controller — start, callback, status
 // ════════════════════════════════════════════════════════════
-import crypto from 'node:crypto';
+import * as crypto from 'node:crypto';
 import prisma from '../utils/prisma.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';

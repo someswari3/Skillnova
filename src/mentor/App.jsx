@@ -15,14 +15,11 @@ const Announcements  = lazy(() => import('./pages/Announcements'));
 const AIAssistant    = lazy(() => import('./pages/AIAssistant'));
 const Profile        = lazy(() => import('./pages/Profile'));
 const Settings       = lazy(() => import('./pages/Settings'));
-const RoadmapManage  = lazy(() => import('./pages/RoadmapManage'));
 
 const PAGES = {
-  dashboard:      <Dashboard />,
   interns:        <Suspense fallback={<PageLoader />}><Interns /></Suspense>,
   reports:        <Suspense fallback={<PageLoader />}><Reports /></Suspense>,
   projects:       <Suspense fallback={<PageLoader />}><Projects /></Suspense>,
-  roadmap:        <Suspense fallback={<PageLoader />}><RoadmapManage /></Suspense>,
   knowledge:      <Suspense fallback={<PageLoader />}><KnowledgeBase /></Suspense>,
   qa:             <Suspense fallback={<PageLoader />}><QnA /></Suspense>,
   announcements:  <Suspense fallback={<PageLoader />}><Announcements /></Suspense>,
@@ -35,7 +32,7 @@ const MentorApp = () => {
   const [page, setPage] = useState('dashboard');
   return (
     <MainLayout page={page} onNavigate={setPage}>
-      {PAGES[page]}
+      {page === 'dashboard' ? <Dashboard onNavigate={setPage} /> : PAGES[page]}
     </MainLayout>
   );
 };

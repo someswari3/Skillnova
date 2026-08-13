@@ -3,7 +3,7 @@
 // ════════════════════════════════════════════════════════════
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import crypto from 'node:crypto';
+import * as crypto from 'node:crypto';
 import speakeasy from 'speakeasy';
 import { config } from '../config/index.js';
 

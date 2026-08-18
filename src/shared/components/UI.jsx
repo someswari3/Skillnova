@@ -1,20 +1,17 @@
 // ══════════════════════════════════════════════
 //  SHARED — UI.jsx  (UptoSkills Branded)
 // ══════════════════════════════════════════════
-
-import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, X, CheckSquare } from "lucide-react";
+import { useState } from "react";
+import { TrendingUp, X } from "lucide-react";
 
 // UptoSkills Brand Colors
 export const BRAND = {
-  orange:    "#ff6d34", // Main Brand Color
-  green:     "#00bea3",
-  dark:      "#2D3436",
+  orange: "#ff6d34", // Main Brand Color
+  green: "#00bea3",
+  dark: "#2D3436",
   orangeLight: "#fff3ee",
-  greenLight:  "#e6faf8",
+  greenLight: "#e6faf8",
 };
-
-const MotionDiv = motion.div;
 
 /* ── Avatar ─────────────────────────────────── */
 export const Avatar = ({ initials, size = "md" }) => {
@@ -40,9 +37,9 @@ export const Badge = ({ children, variant = "default" }) => {
     default: { background: "var(--badge-default-bg)", color: "var(--badge-default-fg)", border: "1px solid var(--badge-default-border)" },
     success: { background: "var(--badge-success-bg)", color: "var(--badge-success-fg)", border: "1px solid var(--badge-success-border)" },
     warning: { background: "var(--badge-warning-bg)", color: "var(--badge-warning-fg)", border: "1px solid var(--badge-warning-border)" },
-    danger:  { background: "var(--badge-danger-bg)", color: "var(--badge-danger-fg)", border: "1px solid var(--badge-danger-border)" },
-    purple:  { background: "var(--badge-purple-bg)", color: "var(--badge-purple-fg)", border: "1px solid var(--badge-purple-border)" },
-    gray:    { background: "var(--badge-gray-bg)", color: "var(--badge-gray-fg)", border: "1px solid var(--badge-gray-border)" },
+    danger: { background: "var(--badge-danger-bg)", color: "var(--badge-danger-fg)", border: "1px solid var(--badge-danger-border)" },
+    purple: { background: "var(--badge-purple-bg)", color: "var(--badge-purple-fg)", border: "1px solid var(--badge-purple-border)" },
+    gray: { background: "var(--badge-gray-bg)", color: "var(--badge-gray-fg)", border: "1px solid var(--badge-gray-border)" },
   };
   return (
     <span
@@ -54,48 +51,25 @@ export const Badge = ({ children, variant = "default" }) => {
   );
 };
 
-import { useRipple, Ripples } from "./AnimatedPage";
-
-export const Card = ({ children, className = "", hover = false, onClick, delay = 0 }) => {
-  const { ripples, addRipple } = useRipple();
-  
-  const handleClick = (e) => {
-    addRipple(e);
-    if (onClick) {
-      setTimeout(() => onClick(e), 200);
-    }
-  };
-
-  return (
-    <MotionDiv
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay, ease: "easeOut" }}
-      onClick={handleClick}
-      whileHover={hover ? { 
-        y: -6, 
-        scale: 1.015,
-        borderColor: "rgba(255, 109, 52, 0.4)",
-        boxShadow: "0 12px 30px rgba(255, 109, 52, 0.12), 0 0 15px rgba(255, 109, 52, 0.1)"
-      } : {}}
-      className={`rounded-2xl ${className} ${hover ? 'cursor-pointer' : ''} premium-card ripple-container`}
-      style={{
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        boxShadow: "var(--card-shadow)",
-        transition: "border-color 0.25s ease, box-shadow 0.25s ease",
-      }}
-    >
-      <Ripples ripples={ripples} />
-      {children}
-    </MotionDiv>
-  );
-};
-
+/* ── Card ────────────────────────────────────── */
+export const Card = ({ children, className = "", hover = false, onClick }) => (
+  <div
+    onClick={onClick}
+    className={`rounded-2xl ${className} ${hover ? 'cursor-pointer' : ''}`}
+    style={{
+      background: "var(--card)",
+      border: "1px solid var(--border)",
+      boxShadow: "var(--card-shadow)",
+      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    }}
+  >
+    {children}
+  </div>
+);
 
 /* ── StatCard (Enhanced) ─────────────────────── */
-export const StatCard = ({ title, value, icon: _Icon, trend, color = "#ff6d34", subtitle, delay = 0 }) => (
-  <Card hover className="p-6 transition-all duration-300" delay={delay}>
+export const StatCard = ({ title, value, icon: _Icon, trend, color = "#ff6d34", subtitle }) => (
+  <Card hover className="p-6 transition-all duration-300">
     <div className="flex items-center justify-between">
       <div className="space-y-1">
         <p className="text-[11px] font-bold uppercase tracking-wider opacity-60">{title}</p>
@@ -108,7 +82,7 @@ export const StatCard = ({ title, value, icon: _Icon, trend, color = "#ff6d34", 
         <_Icon size={24} />
       </div>
     </div>
-    
+
     {trend && (
       <div className="flex items-center gap-1.5 mt-3 pt-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
         <TrendingUp size={12} style={{ color: "#00bea3" }} />
@@ -184,9 +158,8 @@ export const Input = ({ label, icon: Icon, error, ...props }) => (
       )}
       <input
         {...props}
-        className={`w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-2.5 text-sm rounded-xl border bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all ${
-          error ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-slate-300 focus:border-blue-500'
-        }`}
+        className={`w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-2.5 text-sm rounded-xl border bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all ${error ? 'border-red-500 bg-red-50' : 'border-slate-200 hover:border-slate-300 focus:border-blue-500'
+          }`}
       />
     </div>
     {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
@@ -194,45 +167,65 @@ export const Input = ({ label, icon: Icon, error, ...props }) => (
 );
 
 /* ── Modal ────────────────────────────────────── */
-export const Modal = ({ isOpen, onClose, title, children, footer }) => (
-  <AnimatePresence>
-    {isOpen && (
-      <>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm"
-        />
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden pointer-events-auto"
-          >
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-lg text-slate-900">{title}</h3>
-              <button 
-                onClick={onClose}
-                className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
-                type="button"
-              >
-                <X size={18} />
-              </button>
+export const Modal = ({ isOpen, onClose, title, children, footer }) => {
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        className="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm"
+      />
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
+        <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden pointer-events-auto">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="font-bold text-lg text-slate-900">{title}</h3>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+              type="button"
+            >
+              <X size={18} />
+            </button>
+          </div>
+          <div className="p-6">{children}</div>
+          {footer && (
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              {footer}
             </div>
-            <div className="p-6">
-              {children}
-            </div>
-            {footer && (
-              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                {footer}
-              </div>
-            )}
-          </motion.div>
+          )}
         </div>
-      </>
-    )}
-  </AnimatePresence>
-);
+      </div>
+    </>
+  );
+};
+
+/* ── Tooltip ──────────────────────────────────── */
+export const Tooltip = ({ children, content, side = 'top' }) => {
+  const [show, setShow] = useState(false);
+  const positions = {
+    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+  };
+
+  if (!content) return children;
+
+  return (
+    <span className="relative inline-flex"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+      onFocus={() => setShow(true)}
+      onBlur={() => setShow(false)}>
+      {children}
+      {show && (
+        <span className={`absolute z-50 px-2.5 py-1.5 text-xs font-medium rounded-lg shadow-lg whitespace-nowrap pointer-events-none ${positions[side]}`}
+          style={{ background: '#1f2937', color: '#f9fafb' }}
+          role="tooltip">
+          {content}
+        </span>
+      )}
+    </span>
+  );
+};

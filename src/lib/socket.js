@@ -6,11 +6,23 @@ import { io } from 'socket.io-client';
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || '';
 
 let socket = null;
+let activeToken = null;
 
 export function connectSocket(token) {
-  if (socket?.connected) return socket;
-  if (socket) socket.disconnect();
+  if (socket) {
+    if (token && token !== activeToken) {
+      socket.removeAllListeners();
+      socket.disconnect();
+      socket = null;
+      activeToken = null;
+    } else {
+      return socket;
+    }
+  }
+
+  activeToken = token ?? null;
   socket = io(SOCKET_URL || '/', {
+    path: '/socket.io',
     transports: ['websocket', 'polling'],
     auth: { token },
     withCredentials: true,
@@ -37,6 +49,7 @@ export function disconnectSocket() {
   if (socket) {
     socket.disconnect();
     socket = null;
+    activeToken = null;
   }
 }
 

@@ -13,9 +13,12 @@ export function useNotifications() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const { data } = await api.get('/notifications', { params: { limit: 50 } });
-      setItems(data.items);
-      setUnreadCount(data.unreadCount);
+      const [{ data: listData }, { data: countData }] = await Promise.all([
+        api.get('/notifications', { params: { limit: 50 } }),
+        api.get('/notifications/unread-count'),
+      ]);
+      setItems(listData.items);
+      setUnreadCount(countData.unreadCount ?? 0);
     } catch {
       /* ignore */
     }
@@ -34,10 +37,11 @@ export function useNotifications() {
   }, []);
 
   useEffect(() => {
-    if (!user) return undefined;
+    if (!user) return;
     fetchAll();
     const socket = getSocket();
-    if (!socket) return undefined;
+    if (!socket) return;
+
     const onNotification = (n) => {
       setItems((arr) => [n, ...arr].slice(0, 50));
       setUnreadCount((c) => c + 1);

@@ -13,6 +13,7 @@ const PAGE_TITLES = {
   knowledge:      'Knowledge Base',
   qa:             'Q&A Forum',
   announcements:  'Announcements',
+  leave_requests: 'Leave Requests',
   ai:             'AI Assistant',
   profile:        'My Profile',
   settings:       'Settings',

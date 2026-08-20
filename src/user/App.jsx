@@ -16,6 +16,7 @@ const Profile          = lazy(() => import('./pages/Profile'));
 const Settings         = lazy(() => import('./pages/Settings'));
 const ProjectFlow      = lazy(() => import('./pages/ProjectFlow'));
 const Attendance       = lazy(() => import('./pages/Attendance'));
+const LeaveRequests    = lazy(() => import('./pages/LeaveRequests'));
 const KanbanPage       = lazy(() => import('./pages/Kanban'));
 const Calendar         = lazy(() => import('./pages/Calendar'));
 const Files            = lazy(() => import('./pages/Files'));
@@ -34,6 +35,7 @@ const PAGES = {
   files:          <Suspense fallback={<PageLoader />}><Files /></Suspense>,
   reports:        <Suspense fallback={<PageLoader />}><Reports /></Suspense>,
   attendance:     <Suspense fallback={<PageLoader />}><Attendance /></Suspense>,
+  leave_requests: <Suspense fallback={<PageLoader />}><LeaveRequests /></Suspense>,
   ai:             <Suspense fallback={<PageLoader />}><AIAssistant /></Suspense>,
   notifications:  <Suspense fallback={<PageLoader />}><Notifications /></Suspense>,
   announcements:  <Suspense fallback={<PageLoader />}><Announcements /></Suspense>,

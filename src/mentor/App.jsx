@@ -15,6 +15,7 @@ const Announcements  = lazy(() => import('./pages/Announcements'));
 const AIAssistant    = lazy(() => import('./pages/AIAssistant'));
 const Profile        = lazy(() => import('./pages/Profile'));
 const Settings       = lazy(() => import('./pages/Settings'));
+const LeaveRequests  = lazy(() => import('./pages/LeaveRequests'));
 
 const PAGES = {
   interns:        <Suspense fallback={<PageLoader />}><Interns /></Suspense>,
@@ -26,6 +27,7 @@ const PAGES = {
   ai:             <Suspense fallback={<PageLoader />}><AIAssistant /></Suspense>,
   profile:        <Suspense fallback={<PageLoader />}><Profile /></Suspense>,
   settings:       <Suspense fallback={<PageLoader />}><Settings /></Suspense>,
+  leave_requests: <Suspense fallback={<PageLoader />}><LeaveRequests /></Suspense>,
 };
 
 const MentorApp = () => {

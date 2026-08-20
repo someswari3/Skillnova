@@ -37,6 +37,11 @@ export const PERMISSIONS = {
   'attendance:mark':       ['SUPER_ADMIN', 'ADMIN', 'MENTOR'],
   'attendance:self':       ['INTERN', 'MENTOR', 'ADMIN', 'SUPER_ADMIN'],
 
+  // Leave Requests
+  'leave:read':            ['SUPER_ADMIN', 'ADMIN', 'MENTOR', 'INTERN'],
+  'leave:create':          ['INTERN'],
+  'leave:update':          ['SUPER_ADMIN', 'ADMIN', 'MENTOR'],
+
   // Projects & Tasks
   'projects:read':   ['SUPER_ADMIN', 'ADMIN', 'MENTOR', 'INTERN'],
   'projects:create': ['SUPER_ADMIN', 'ADMIN', 'MENTOR'],

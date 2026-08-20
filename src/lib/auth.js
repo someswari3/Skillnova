@@ -104,7 +104,6 @@ export const useAuthStore = create((set, get) => ({
           loading: false,
         });
         return { step: 'otp', otpMode: data.otpMode ?? (data.user?.role === 'INTERN' ? 'user' : 'admin') };
-        return { step: "otp" };
       }
       set({
         user: data.user,

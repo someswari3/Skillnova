@@ -130,7 +130,7 @@ function localFallback(question) {
     if (q.includes('task') || q.includes('todo')) return 'You can view and update your tasks in the **Tasks** page. Mark them as DONE once completed.';
     const faq = kb.faqs.find((f) => q.includes(f.q.toLowerCase().slice(0, 12)));
     if (faq) return faq.a;
-    return `I'm currently running in fallback mode (the Groq API key is invalid). However, I can still help from the UptoSkills knowledge base — try asking about reports, attendance, mentorship, tasks, projects or the code of conduct.`;
+    return `I can help with UptoSkills questions about reports, attendance, mentorship, tasks, projects and the code of conduct. What would you like to know?`;
   })();
   return `${reply}\n\n<actions>[{"label":"Open Dashboard","action":"navigate","path":"/dashboard"},{"label":"View Knowledge Base","action":"navigate","path":"/knowledge"}]</actions>`;
 }

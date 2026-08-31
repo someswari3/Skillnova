@@ -7,6 +7,7 @@
 //  in dev and by nginx in prod).
 // ════════════════════════════════════════════════════════════════════
 import { useEffect, useRef, useState } from 'react';
+import api from '../../lib/api';
 
 const APP_NAME = 'AIAssistant';
 const API_BASE = '/api/aiassistant';
@@ -59,10 +60,12 @@ export default function AIAssistant({ role = 'INTERN', userName = null }) {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const sessionRef = useRef(null);
+  const nodeSessionRef = useRef(null);
   const scrollRef = useRef(null);
 
   useEffect(() => {
     sessionRef.current = readSessionId(role);
+    nodeSessionRef.current = null;
   }, [role]);
 
   useEffect(() => {
@@ -100,6 +103,7 @@ export default function AIAssistant({ role = 'INTERN', userName = null }) {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+      sessionRef.current = data.session_id || sessionRef.current;
       setMessages((m) => [
         ...m,
         {
@@ -110,10 +114,27 @@ export default function AIAssistant({ role = 'INTERN', userName = null }) {
         },
       ]);
     } catch (err) {
-      setMessages((m) => [
-        ...m,
-        { role: 'bot', content: `AIAssistant is unreachable. (${err.message || 'network error'})` },
-      ]);
+      try {
+        const { data } = await api.post('/ai/chat', {
+          message: text,
+          ...(nodeSessionRef.current ? { sessionId: nodeSessionRef.current } : {}),
+        });
+        nodeSessionRef.current = data.sessionId || nodeSessionRef.current;
+        setMessages((m) => [
+          ...m,
+          {
+            role: 'bot',
+            content: data.reply || 'Sorry, something went wrong.',
+            sources: [],
+            confidence: null,
+          },
+        ]);
+      } catch (fallbackError) {
+        setMessages((m) => [
+          ...m,
+          { role: 'bot', content: `AIAssistant is unreachable. (${fallbackError.message || err.message || 'network error'})` },
+        ]);
+      }
     } finally {
       setBusy(false);
     }
@@ -122,6 +143,7 @@ export default function AIAssistant({ role = 'INTERN', userName = null }) {
   function resetConversation() {
     resetSessionId(role);
     sessionRef.current = readSessionId(role);
+    nodeSessionRef.current = null;
     setMessages([
       {
         role: 'bot',
